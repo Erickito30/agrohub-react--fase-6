@@ -1,5 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNotifications } from "../context/NotificationsContext.jsx";
+
+const FAVORITES_STORAGE_KEY = "agrohub-ong-favorites";
 
 const initialItems = [
   {
@@ -60,6 +62,18 @@ export default function Ong() {
   const [activeFilter, setActiveFilter] = useState("todos");
   const [maxDistance, setMaxDistance] = useState(80);
   const [scheduledIds, setScheduledIds] = useState(() => new Set());
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [showingFavorites, setShowingFavorites] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+  }, [favorites]);
 
   const items = useMemo(() => {
     const merged = [...excedentes, ...initialItems];
@@ -70,18 +84,32 @@ export default function Ong() {
     );
   }, [excedentes, scheduledIds]);
 
-  const visibleItems = useMemo(
-    () =>
-      items.filter(
+  const visibleItems = useMemo(() => {
+    const sourceItems = showingFavorites
+      ? favorites.map((item) =>
+          scheduledIds.has(item.id)
+            ? { ...item, scheduled: true, badge: "Agendado", priority: "muted" }
+            : item
+        )
+      : items;
+
+    return sourceItems.filter(
         (item) =>
           (activeFilter === "todos" || item.category === activeFilter) &&
           item.distance <= maxDistance
-      ),
-    [activeFilter, items, maxDistance]
-  );
+      );
+  }, [activeFilter, favorites, items, maxDistance, scheduledIds, showingFavorites]);
 
   const handleSchedule = (id) => {
     setScheduledIds((current) => new Set(current).add(id));
+  };
+
+  const toggleFavorite = (item) => {
+    setFavorites((current) =>
+      current.some((favorite) => favorite.id === item.id)
+        ? current.filter((favorite) => favorite.id !== item.id)
+        : [item, ...current]
+    );
   };
 
   return (
@@ -136,7 +164,7 @@ export default function Ong() {
                 <div
                   className="d-flex flex-wrap gap-2 align-self-md-end"
                   data-filter-group
-                  aria-label="Filtrar excedentes"
+                  aria-label="Filtrar excedentes por categoria"
                 >
                   {FILTERS.map((filter) => (
                     <button
@@ -150,11 +178,22 @@ export default function Ong() {
                       {filter.label}
                     </button>
                   ))}
+                  <button
+                    className={`ah-tab${showingFavorites ? " active" : ""}`}
+                    type="button"
+                    aria-pressed={showingFavorites}
+                    onClick={() => setShowingFavorites((current) => !current)}
+                  >
+                    Salvos ({favorites.length})
+                  </button>
                 </div>
               </div>
 
               <div className="ah-list" data-donation-list>
                 {visibleItems.map((item) => {
+                  const isFavorite = favorites.some(
+                    (favorite) => favorite.id === item.id
+                  );
                   const badgeClass =
                     item.scheduled
                       ? "ah-badge ah-badge-muted"
@@ -176,6 +215,15 @@ export default function Ong() {
                       </div>
                       <span className={badgeClass}>{item.badge}</span>
                       <button
+                        className={`ah-btn ah-btn-outline ah-btn-sm ah-favorite-toggle${isFavorite ? " is-saved" : ""}`}
+                        type="button"
+                        aria-label={isFavorite ? `Remover ${item.title} dos salvos` : `Salvar ${item.title}`}
+                        aria-pressed={isFavorite}
+                        onClick={() => toggleFavorite(item)}
+                      >
+                        {isFavorite ? "Salvo" : "Salvar"}
+                      </button>
+                      <button
                         className="ah-btn ah-btn-sm"
                         type="button"
                         data-schedule
@@ -192,7 +240,9 @@ export default function Ong() {
 
               {visibleItems.length === 0 && (
                 <p className="ah-empty mt-3 show" data-empty-state>
-                  Nenhum excedente encontrado para esse filtro.
+                  {showingFavorites
+                    ? "Nenhum excedente salvo para esse filtro."
+                    : "Nenhum excedente encontrado para esse filtro."}
                 </p>
               )}
             </div>

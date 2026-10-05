@@ -618,11 +618,28 @@ h3 {
 
 .ah-list-item {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr) auto auto;
+    grid-template-columns: 3rem minmax(0, 1fr) auto auto auto;
     align-items: center;
     gap: 1rem;
     padding: 1rem;
     transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.ah-favorite-toggle {
+    color: var(--ah-green-900);
+    background: var(--ah-cream);
+    border-color: var(--ah-border);
+}
+
+.ah-favorite-toggle.is-saved {
+    color: var(--ah-white);
+    background: var(--ah-green-700);
+    border-color: var(--ah-green-700);
+}
+
+.ah-favorite-toggle.is-saved:hover {
+    color: var(--ah-white);
+    background: var(--ah-green-900);
 }
 
 .ah-list-item.d-none {
