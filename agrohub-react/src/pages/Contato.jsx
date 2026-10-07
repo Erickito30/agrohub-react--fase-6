@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import PageIntro from "../components/PageIntro.jsx";
 
 const contactCards = [
   {
@@ -166,17 +167,10 @@ export default function Contato() {
 
   return (
     <>
-      <section className="ah-page-hero">
-        <div className="container">
-          <span className="ah-eyebrow">Suporte e contato</span>
-          <h1 className="ah-title mb-3">Fale com a equipe AgroHub.</h1>
-          <p className="ah-lead mb-0">
-            Tire dúvidas, reporte problemas, proponha parcerias ou envie
-            sugestões para melhorar a plataforma. Respondemos em até 24 horas
-            úteis.
-          </p>
-        </div>
-      </section>
+      <PageIntro eyebrow="Suporte e contato" title="Fale com a equipe AgroHub.">
+        Tire dúvidas, reporte problemas, proponha parcerias ou envie
+        sugestões para melhorar a plataforma. Respondemos em até 24 horas úteis.
+      </PageIntro>
 
       <section className="ah-section">
         <div className="container">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import PitchSection from "../components/PitchSection.jsx";
 
 const IMPACT_MULTIPLIERS = {
   hortifruti: 3,
@@ -33,10 +34,10 @@ export default function Home() {
           <div className="row align-items-center">
             <div className="col-lg-8">
               <span className="ah-eyebrow">
-                FIAP 2026 - Fase 5 PBL - Grupo 44
+                FIAP 2026 - Fase 6 PBL - Grupo 44
               </span>
               <h1 className="ah-title mb-3">
-                Não é falta de alimento. É falta de conexão.
+                AgroHub
               </h1>
               <p className="ah-lead mb-4">
                 A AgroHub conecta pequenos produtores rurais a instituições
@@ -270,65 +271,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ah-section ah-section-dark" id="pitch">
-        <div className="container">
-          <div className="row g-4 align-items-stretch">
-            <div className="col-lg-5">
-              <span className="ah-eyebrow">Pitch Vídeo</span>
-              <h2 className="ah-section-title mb-3">
-                Apresentações do projeto
-              </h2>
-              <p className="ah-lead mb-0">
-                O vídeo da Fase 3 foi mantido como registro do protótipo
-                anterior. O vídeo da Fase 4 foi inserido, com os testes do Fale
-                Conosco e a nova funcionalidade.
-              </p>
-            </div>
-
-            <div className="col-lg-7">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <article className="ah-pitch-card">
-                    <span className="ah-badge ah-badge-success">Fase 3</span>
-                    <h3 className="ah-card-title h5 mt-3">Protótipo inicial</h3>
-                    <p className="ah-text-muted">
-                      Pitch já gravado para apresentar a navegabilidade da versão
-                      anterior.
-                    </p>
-                    <a
-                      className="ah-btn"
-                      href="https://drive.google.com/file/d/1Q60UvvN7hrO8EKcji6_TGK2RlSb9yrnV/view?usp=sharing"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Assistir Pitch da Fase 3
-                    </a>
-                  </article>
-                </div>
-
-                <div className="col-md-6">
-                  <article className="ah-pitch-card">
-                    <span className="ah-badge ah-badge-warning">Fase 4</span>
-                    <h3 className="ah-card-title h5 mt-3">Testes e melhorias</h3>
-                    <p className="ah-text-muted">
-                      Pitch da Fase 4 apresentando os testes do Fale Conosco e a
-                      funcionalidade de simulação de impacto.
-                    </p>
-                    <a
-                      className="ah-btn"
-                      href="https://youtube.com/shorts/YjEcv2xwYz8"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Assistir Pitch da Fase 4
-                    </a>
-                  </article>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PitchSection />
     </>
   );
 }
