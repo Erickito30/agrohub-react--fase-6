@@ -58,16 +58,3 @@ Multiplicidade: `1` exatamente um, `0..1` no maximo um, `0..*` zero ou mais.
 | ONG.agendarColeta() / Excedente.marcarComoAgendado() | `handleSchedule` e `scheduledIds` em `Ong.jsx` |
 | ONG.favoritar() / removerFavorito() / listarFavoritos() | `toggleFavorite`, estado `favorites` e aba Salvos em `Ong.jsx` |
 | ONG.favoritos | `favorites`, salvo no localStorage (`agrohub-ong-favorites`) |
-
-## Roteiro curto para o pitch (cerca de 1 minuto)
-
-1. "Modelamos o AgroHub com sete classes."
-2. "Usuario e a classe base, com nome, email e cidade. Produtor e ONG herdam
-   dela: isso e a heranca."
-3. "O Produtor cadastra Excedentes. E uma composicao: o excedente so existe
-   porque um produtor o cadastrou."
-4. "Cada excedente gera uma Notificacao, que fica guardada na Central de
-   Notificacoes. Essa foi a funcionalidade da Fase 5."
-5. "A ONG se associa aos excedentes de duas formas: agenda coletas, criando um
-   Agendamento, e - a novidade da Fase 6 - favorita os excedentes que quer
-   acompanhar, com os metodos favoritar, removerFavorito e listarFavoritos."
