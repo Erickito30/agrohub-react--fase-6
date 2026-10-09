@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import PitchSection from "../components/PitchSection.jsx";
 
@@ -9,6 +9,7 @@ const IMPACT_MULTIPLIERS = {
 };
 
 export default function Home() {
+  const aboutRef = useRef(null);
   const [impact, setImpact] = useState({
     kg: 120,
     category: "hortifruti",
@@ -52,9 +53,7 @@ export default function Home() {
                   className="ah-btn ah-btn-outline"
                   type="button"
                   onClick={() =>
-                    document
-                      .getElementById("sobre")
-                      ?.scrollIntoView({ behavior: "smooth" })
+                    aboutRef.current?.scrollIntoView({ behavior: "smooth" })
                   }
                 >
                   Conhecer a solução
@@ -65,7 +64,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ah-section" id="sobre">
+      <section className="ah-section" id="sobre" ref={aboutRef}>
         <div className="container">
           <div className="row g-4 align-items-start">
             <div className="col-lg-5">

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNotifications } from "../context/NotificationsContext.jsx";
 
 const benefitCards = [
@@ -15,43 +16,35 @@ const benefitCards = [
   },
 ];
 
+const EMPTY_FORM = { produto: "", quantidade: "", validade: "", retirada: "" };
+
 export default function Produtor() {
   const { addExcedente } = useNotifications();
+  const [values, setValues] = useState(EMPTY_FORM);
+  const [validated, setValidated] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setSuccess(false);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const form = event.currentTarget;
-    const successMessage = form.querySelector("[data-form-success]");
-
-    form.classList.remove("was-validated");
 
     if (!form.checkValidity()) {
-      form.classList.add("was-validated");
-      form.querySelector(":invalid")?.focus();
-      if (successMessage) {
-        successMessage.classList.add("d-none");
-        successMessage.setAttribute("hidden", "hidden");
-      }
+      setValidated(true);
+      setSuccess(false);
+      [...form.elements].find((field) => !field.checkValidity())?.focus();
       return;
     }
 
-    const data = new FormData(form);
-    addExcedente({
-      produto: data.get("produto"),
-      quantidade: data.get("quantidade"),
-      validade: data.get("validade"),
-      retirada: data.get("retirada"),
-    });
-
-    if (successMessage) {
-      successMessage.classList.remove("d-none");
-      successMessage.removeAttribute("hidden");
-      successMessage.setAttribute("role", "status");
-    }
-
-    form.reset();
-    form.classList.remove("was-validated");
+    addExcedente(values);
+    setValues(EMPTY_FORM);
+    setValidated(false);
+    setSuccess(true);
   };
 
   return (
@@ -85,7 +78,12 @@ export default function Produtor() {
             <h2 className="ah-section-title mb-4">
               Cadastrar alimento disponível
             </h2>
-            <form data-ah-form noValidate onSubmit={handleSubmit}>
+            <form
+              className={validated ? "was-validated" : undefined}
+              data-ah-form
+              noValidate
+              onSubmit={handleSubmit}
+            >
               <div className="row g-3">
                 <div className="col-md-6">
                   <label className="form-label fw-bold" htmlFor="produto">
@@ -95,6 +93,8 @@ export default function Produtor() {
                     className="form-control ah-form-control"
                     id="produto"
                     name="produto"
+                    value={values.produto}
+                    onChange={handleChange}
                     type="text"
                     placeholder="Ex.: cenoura"
                     required
@@ -110,6 +110,8 @@ export default function Produtor() {
                     className="form-control ah-form-control"
                     id="quantidade"
                     name="quantidade"
+                    value={values.quantidade}
+                    onChange={handleChange}
                     type="text"
                     placeholder="Ex.: 150 kg"
                     required
@@ -125,6 +127,8 @@ export default function Produtor() {
                     className="form-control ah-form-control"
                     id="validade"
                     name="validade"
+                    value={values.validade}
+                    onChange={handleChange}
                     type="date"
                     required
                   />
@@ -141,6 +145,8 @@ export default function Produtor() {
                     className="form-control ah-form-control"
                     id="retirada"
                     name="retirada"
+                    value={values.retirada}
+                    onChange={handleChange}
                     type="text"
                     autoComplete="street-address"
                     required
@@ -149,9 +155,11 @@ export default function Produtor() {
                 </div>
 
                 <div className="col-12">
-                  <p className="ah-success d-none p-3 mb-3" data-form-success hidden>
-                    Excedente registrado com sucesso.
-                  </p>
+                  {success && (
+                    <p className="ah-success p-3 mb-3" data-form-success role="status">
+                      Excedente registrado com sucesso.
+                    </p>
+                  )}
                   <button className="ah-btn" type="submit">
                     Registrar excedente
                   </button>

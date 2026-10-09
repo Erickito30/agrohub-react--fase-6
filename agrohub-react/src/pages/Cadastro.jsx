@@ -15,19 +15,26 @@ export default function Cadastro() {
     usuario: false,
   });
 
+  // Aba com a validação visível e, por aba, um contador usado como key
+  // para recriar (e limpar) o formulário depois de um envio bem-sucedido.
+  const [validatedTab, setValidatedTab] = useState(null);
+  const [resetByTab, setResetByTab] = useState({
+    produtor: 0,
+    ong: 0,
+    usuario: 0,
+  });
+
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const form = event.currentTarget;
-    form.classList.remove("was-validated");
 
     if (!form.checkValidity()) {
-      form.classList.add("was-validated");
-      form.querySelector(":invalid")?.focus();
+      setValidatedTab(activeTab);
+      [...form.elements].find((field) => !field.checkValidity())?.focus();
       return;
     }
 
@@ -35,9 +42,11 @@ export default function Cadastro() {
       ...current,
       [activeTab]: true,
     }));
-
-    form.reset();
-    form.classList.remove("was-validated");
+    setValidatedTab(null);
+    setResetByTab((current) => ({
+      ...current,
+      [activeTab]: current[activeTab] + 1,
+    }));
   };
 
   const clearSuccess = () => {
@@ -52,8 +61,10 @@ export default function Cadastro() {
 
     return (
       <form
-        key={formId}
-        className={`ah-panel-form${isActive ? "" : " d-none"}`}
+        key={`${formId}-${resetByTab[formId]}`}
+        className={`ah-panel-form${isActive ? "" : " d-none"}${
+          validatedTab === formId ? " was-validated" : ""
+        }`}
         id={`painel-${formId}`}
         role="tabpanel"
         data-panel={formId}
