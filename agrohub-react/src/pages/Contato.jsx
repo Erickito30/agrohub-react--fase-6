@@ -91,6 +91,7 @@ export default function Contato() {
     lgpd: false,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [validated, setValidated] = useState(false);
   const [openFaq, setOpenFaq] = useState("faq1");
 
   const charCount = useMemo(
@@ -144,12 +145,12 @@ export default function Contato() {
       validMessage;
 
     if (!validRequired || !form.checkValidity()) {
-      form.classList.add("was-validated");
+      setValidated(true);
       setSubmitted(false);
       return;
     }
 
-    form.classList.remove("was-validated");
+    setValidated(false);
     setSubmitted(true);
     setFormState({
       nome: "",
@@ -189,7 +190,7 @@ export default function Contato() {
 
             <div className="col-lg-8">
               <form
-                className="ah-panel"
+                className={`ah-panel${validated ? " was-validated" : ""}`}
                 id="form-contato"
                 data-ah-form
                 data-contact-form
