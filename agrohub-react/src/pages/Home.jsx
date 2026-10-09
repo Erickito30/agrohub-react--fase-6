@@ -35,7 +35,7 @@ export default function Home() {
           <div className="row align-items-center">
             <div className="col-lg-8">
               <span className="ah-eyebrow">
-                FIAP 2026 - Fase 6 PBL - Grupo 44
+                FIAP 2026 - Fase 6 PBL - Grupo 86
               </span>
               <h1 className="ah-title mb-3">
                 AgroHub
