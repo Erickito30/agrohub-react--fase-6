@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PageIntro from "../components/PageIntro.jsx";
 
 const TABS = [
   { id: "produtor", label: "Produtor" },
@@ -115,16 +116,9 @@ export default function Cadastro() {
 
   return (
     <>
-      <section className="ah-page-hero">
-        <div className="container">
-          <span className="ah-eyebrow">Cadastro</span>
-          <h1 className="ah-title mb-3">Escolha seu perfil na rede AgroHub.</h1>
-          <p className="ah-lead mb-0">
-            Abas separadas reduzem complexidade e deixam o fluxo simples para
-            produtor, ONG e usuário.
-          </p>
-        </div>
-      </section>
+      <PageIntro eyebrow="Cadastro" title="Escolha seu perfil na rede AgroHub.">
+        Produtores, ONGs e pessoas que querem participar de uma rede com menos desperdício.
+      </PageIntro>
 
       <section className="ah-section">
         <div className="container">
