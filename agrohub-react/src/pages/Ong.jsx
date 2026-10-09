@@ -2,6 +2,55 @@ import { useEffect, useMemo, useState } from "react";
 import { useNotifications } from "../context/NotificationsContext.jsx";
 
 const FAVORITES_STORAGE_KEY = "agrohub-ong-favorites";
+const SCHEDULED_STORAGE_KEY = "agrohub-ong-scheduled";
+
+// O localStorage pode estar indisponível (modo privado, bloqueio do
+// navegador) ou conter um valor corrompido; nesses casos o painel segue
+// funcionando só com o estado em memória.
+function readStorage(key, sanitize) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(parsed) ? sanitize(parsed) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Sem armazenamento disponível: os dados valem só para esta visita.
+  }
+}
+
+function isValidItem(item) {
+  return (
+    item !== null &&
+    typeof item === "object" &&
+    typeof item.id === "number" &&
+    typeof item.title === "string"
+  );
+}
+
+// O favorito guarda uma cópia do excedente sem o estado temporário da
+// sessão: o selo "Novo" só vale enquanto o cadastro é recente e o
+// agendamento é controlado separadamente por scheduledIds.
+function toFavoriteSnapshot(item) {
+  const isNew = item.badge === "Novo";
+  return {
+    ...item,
+    scheduled: false,
+    badge: isNew || item.badge === "Agendado" ? "Disponível" : item.badge,
+    priority: isNew || item.priority === "muted" ? "success" : item.priority,
+  };
+}
+
+function withSchedule(item, scheduledIds) {
+  return scheduledIds.has(item.id)
+    ? { ...item, scheduled: true, badge: "Agendado", priority: "muted" }
+    : item;
+}
 
 const initialItems = [
   {
@@ -61,35 +110,45 @@ export default function Ong() {
   const { excedentes } = useNotifications();
   const [activeFilter, setActiveFilter] = useState("todos");
   const [maxDistance, setMaxDistance] = useState(80);
-  const [scheduledIds, setScheduledIds] = useState(() => new Set());
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || "[]");
-    } catch {
-      return [];
-    }
-  });
+  const [scheduledIds, setScheduledIds] = useState(
+    () =>
+      new Set(
+        readStorage(SCHEDULED_STORAGE_KEY, (ids) =>
+          ids.filter((id) => typeof id === "number")
+        )
+      )
+  );
+  const [favorites, setFavorites] = useState(() =>
+    readStorage(FAVORITES_STORAGE_KEY, (list) =>
+      list.filter(isValidItem).map(toFavoriteSnapshot)
+    )
+  );
   const [showingFavorites, setShowingFavorites] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    writeStorage(FAVORITES_STORAGE_KEY, favorites);
   }, [favorites]);
 
-  const items = useMemo(() => {
-    const merged = [...excedentes, ...initialItems];
-    return merged.map((item) =>
-      scheduledIds.has(item.id)
-        ? { ...item, scheduled: true, badge: "Agendado", priority: "muted" }
-        : item
-    );
-  }, [excedentes, scheduledIds]);
+  useEffect(() => {
+    writeStorage(SCHEDULED_STORAGE_KEY, [...scheduledIds]);
+  }, [scheduledIds]);
+
+  const allItems = useMemo(() => [...excedentes, ...initialItems], [excedentes]);
+
+  const items = useMemo(
+    () => allItems.map((item) => withSchedule(item, scheduledIds)),
+    [allItems, scheduledIds]
+  );
 
   const visibleItems = useMemo(() => {
+    // Em Salvos, usa a versão atual do excedente quando ele ainda está na
+    // lista; se não estiver mais (ex.: cadastro de outra visita), usa a cópia.
     const sourceItems = showingFavorites
-      ? favorites.map((item) =>
-          scheduledIds.has(item.id)
-            ? { ...item, scheduled: true, badge: "Agendado", priority: "muted" }
-            : item
+      ? favorites.map((favorite) =>
+          withSchedule(
+            allItems.find((item) => item.id === favorite.id) ?? favorite,
+            scheduledIds
+          )
         )
       : items;
 
@@ -98,7 +157,7 @@ export default function Ong() {
           (activeFilter === "todos" || item.category === activeFilter) &&
           item.distance <= maxDistance
       );
-  }, [activeFilter, favorites, items, maxDistance, scheduledIds, showingFavorites]);
+  }, [activeFilter, allItems, favorites, items, maxDistance, scheduledIds, showingFavorites]);
 
   const handleSchedule = (id) => {
     setScheduledIds((current) => new Set(current).add(id));
@@ -108,7 +167,12 @@ export default function Ong() {
     setFavorites((current) =>
       current.some((favorite) => favorite.id === item.id)
         ? current.filter((favorite) => favorite.id !== item.id)
-        : [item, ...current]
+        : [
+            toFavoriteSnapshot(
+              allItems.find((candidate) => candidate.id === item.id) ?? item
+            ),
+            ...current,
+          ]
     );
   };
 

@@ -26,9 +26,14 @@ Para ativar o link do pitch na Home, preencher `PHASE_6_VIDEO_URL` em
 `agrohub-react/src/data/pitches.js` com a URL HTTPS do video publico da Fase 6.
 Gerar novo build depois de alterar. O link ainda depende da publicacao do video.
 
-O Vite herdou `base: /agrohub-react-fase5/`. Antes do deploy no GitHub Pages do
-novo repositorio, Erick deve ajustar para `/agrohub-react--fase-6/`. Se o grupo
-escolher dominio raiz/Vercel, usar a base correspondente. O app usa HashRouter.
+O Vite usa `base: /agrohub-react--fase-6/`, o caminho do GitHub Pages do
+repositorio novo. Se o grupo escolher dominio raiz/Vercel, usar a base
+correspondente. O app usa HashRouter.
+
+O painel ONG guarda no localStorage os favoritos (`agrohub-ong-favorites`) e os
+agendamentos (`agrohub-ong-scheduled`), entao os dois continuam apos recarregar
+a pagina no mesmo navegador. Se o armazenamento estiver indisponivel ou com
+dado invalido, o painel ignora o valor salvo e funciona so em memoria.
 
 Os documentos antigos HANDOVER.md e agrohub-react/README.md sao historicos da
 Fase 5. Seguir docs/fase6 para esta entrega. O PDF de UML e material de apoio;
