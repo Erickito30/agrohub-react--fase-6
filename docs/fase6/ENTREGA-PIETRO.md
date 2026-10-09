@@ -12,6 +12,11 @@
 
 ## UML fiel ao codigo
 
+> Atualizacao: o grupo decidiu usar um modelo de dominio com heranca
+> (Usuario -> Produtor/ONG) e metodos em todas as classes, para cobrir todos os
+> itens do enunciado. O diagrama atual e a explicacao estao em [UML.md](UML.md).
+> O texto abaixo descreve a versao anterior, mantida como historico.
+
 O diagrama e um modelo de analise UML, nao uma lista de declaracoes JavaScript
 `class`: a aplicacao usa componentes funcionais, hooks e objetos simples.
 Os nomes das operacoes exibidas agora correspondem literalmente a funcoes
