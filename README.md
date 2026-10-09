@@ -7,8 +7,9 @@ Esta versao integra os ajustes da Home, Cadastro e Contato do Pietro com os
 favoritos ja implementados pelo colega. O painel ONG e o CSS nao foram alterados
 por esta integracao. O UML foi revisado conforme os dados e funcoes existentes.
 
-- [Entrega e correspondencia do UML](docs/fase6/ENTREGA-PIETRO.md)
+- [Diagrama UML e explicacao](docs/fase6/UML.md) ([PDF](docs/fase6/AgroHub-Fase6-UML.pdf))
 - [Diagrama em imagem](docs/fase6/diagrama-classes.png)
+- [Entrega do Pietro](docs/fase6/ENTREGA-PIETRO.md)
 - [Fonte Mermaid editavel](docs/fase6/diagrama-classes.mmd)
 - [Divisao atualizada do grupo](docs/fase6/DIVISAO-GRUPO.md)
 

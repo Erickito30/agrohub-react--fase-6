@@ -1,53 +1,73 @@
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#eef4ec"
+    primaryBorderColor: "#2f5d3a"
+    primaryTextColor: "#1d2b20"
+    lineColor: "#2f5d3a"
+    fontFamily: "Helvetica, Arial, sans-serif"
+---
 classDiagram
-direction LR
+direction TB
+class Usuario {
+  #Number id
+  #String nome
+  #String email
+  #String cidade
+  +cadastrar() void
+  +atualizarDados(dados) void
+}
 class Produtor {
-  <<boundary>>
-  +String produto
-  +String quantidade
-  +String validade
-  +String retirada
-  +handleSubmit(event) void
+  -String localRetirada
+  +cadastrarExcedente(produto, quantidade, validade) Excedente
+  +listarExcedentes() Excedente[]
 }
-class NotificationsProvider {
-  <<control>>
-  -Excedente[] excedentes
-  -Notificacao[] notifications
-  +Number unreadCount
-  +addExcedente(dados) void
-  +markAllAsRead() void
-}
-class Ong {
-  <<boundary>>
-  -String activeFilter
-  -Number maxDistance
-  -Set~Number~ scheduledIds
-  -Excedente[] favorites
-  -Boolean showingFavorites
-  +handleSchedule(id) void
-  +toggleFavorite(item) void
+class ONG {
+  -String cnpj
+  -Excedente[] favoritos
+  +filtrarExcedentes(categoria, distanciaMax) Excedente[]
+  +agendarColeta(excedente) Agendamento
+  +favoritar(excedente) void
+  +removerFavorito(excedente) void
+  +listarFavoritos() Excedente[]
 }
 class Excedente {
-  <<data>>
-  +Number id
-  +String category
-  +Number distance
-  +String title
-  +String meta
-  +String badge
-  +String priority
-  +Boolean scheduled
-  +String icon
+  -Number id
+  -String produto
+  -String quantidade
+  -Date validade
+  -String categoria
+  -Number distancia
+  -String status
+  +estaDisponivel() Boolean
+  +marcarComoAgendado() void
+}
+class Agendamento {
+  -Number id
+  -Date dataColeta
+  -String status
+  +confirmar() void
+  +cancelar() void
+}
+class CentralNotificacoes {
+  -Notificacao[] notificacoes
+  +notificar(excedente) Notificacao
+  +marcarTodasComoLidas() void
+  +contarNaoLidas() Number
 }
 class Notificacao {
-  <<data>>
-  +Number id
-  +String mensagem
-  +String hora
-  +Boolean lida
+  -Number id
+  -String mensagem
+  -String hora
+  -Boolean lida
+  +marcarComoLida() void
 }
-Produtor ..> NotificationsProvider : addExcedente
-NotificationsProvider "1" *-- "0..*" Excedente : estado da sessao
-NotificationsProvider "1" *-- "0..*" Notificacao : estado da sessao
-Ong ..> NotificationsProvider : useNotifications
-Ong "1" --> "0..*" Excedente : favorites - snapshots locais
-Excedente "1" -- "0..1" Notificacao : cadastro origina
+Usuario <|-- Produtor : herança
+Usuario <|-- ONG : herança
+Produtor "1" *-- "0..*" Excedente : cadastra
+CentralNotificacoes "1" *-- "0..*" Notificacao : armazena
+Excedente "1" --> "1" Notificacao : gera
+ONG "0..*" --> "0..*" Excedente : favorita
+ONG "1" --> "0..*" Agendamento : agenda
+Agendamento "0..1" --> "1" Excedente : refere-se a
