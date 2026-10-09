@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="ah-footer py-4">
       <div className="container d-flex flex-column flex-md-row justify-content-between gap-2">
         <p>AgroHub - Engenharia de Software FIAP 2026.</p>
-        <p>Grupo 44 - ODS 2.</p>
+        <p>Grupo 86 - ODS 2.</p>
       </div>
     </footer>
   );
