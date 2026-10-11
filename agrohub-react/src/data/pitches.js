@@ -1,5 +1,5 @@
 // Insira aqui o link publico entregue pelo responsavel pelo video da Fase 6.
-export const PHASE_6_VIDEO_URL = "";
+export const PHASE_6_VIDEO_URL = "https://youtu.be/F3RnE1fJM8A";
 
 export function getPublicVideoUrl(value) {
   try {
